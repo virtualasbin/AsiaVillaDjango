@@ -1,0 +1,26 @@
+{% extends 'restaurant/base.html' %}
+{% block content %}
+<h1>Payment Details</h1>
+<h3>Order Summary</h3>
+<ul>
+    {% for item, qty in items_info %}
+    <li>{{ qty }} x {{ item.name }} - ${{ item.price }} each</li>
+    {% endfor %}
+</ul>
+<p><strong>Total Amount: ${{ total }}</strong></p>
+<h2>Enter Payment Details</h2>
+<form method="post">
+    {% csrf_token %}
+    <div class="mb-3">
+        <label for="card_number" class="form-label">Card Number</label>
+        <input type="text" id="card_number" name="card_number" class="form-control"
+            placeholder="Enter 16-digit card number">
+    </div>
+    <button type="submit" class="btn btn-primary">Pay Now</button>
+</form>
+{% if message %}
+<div class="alert {% if success %}alert-success{% else %}alert-danger{% endif %} mt-3">
+    {{ message }}
+</div>
+{% endif %}
+{% endblock %}
