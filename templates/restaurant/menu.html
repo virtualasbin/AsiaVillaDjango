@@ -5,14 +5,27 @@
     {% for item in items %}
     <div class="col-md-4">
         <div class="card mb-4">
-            <img src="{{ item.image.url }}" class="card-img-top">
+            <img src="{{ item.image.url }}" class="card-img-top" alt="{{ item.name }}"
+                style="height: 200px; object-fit: cover;">
             <div class="card-body">
                 <h5 class="card-title">{{ item.name }}</h5>
                 <p class="card-text">{{ item.description }}</p>
-                <p class="card-text">${{ item.price }}</p>
+                <p class="card-text"><strong>Price: ${{ item.price }}</strong></p>
+                <div class="d-flex justify-content-between align-items-center">
+                    <input type="number" id="quantity-{{ item.id }}" name="quantity" value="1" min="1"
+                        class="form-control form-control-sm" style="width: 70px;">
+                    <button class="btn btn-primary btn-sm add-to-basket-btn" data-item-id="{{ item.id }}">Add to
+                        Basket</button>
+                </div>
             </div>
         </div>
     </div>
     {% endfor %}
 </div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // Specific JS for menu page if needed, though general add-to-basket is in base.html
+</script>
 {% endblock %}

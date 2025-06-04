@@ -1,0 +1,72 @@
+{% extends 'restaurant/base.html' %}
+
+{% block title %}Your Basket{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <h2>Your Basket</h2>
+    <div id="basket-container">
+        {% if basket_items %}
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Item</th>
+                    <th>Price</th>
+                    <th>Quantity</th>
+                    <th>Total</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in basket_items %}
+                <tr>
+                    <td>{{ item.name }}</td>
+                    <td>${{ item.price }}</td>
+                    <td>
+                        <form action="{% url 'update_basket_item' item.id %}" method="post" class="form-inline">
+                            {% csrf_token %}
+                            <input type="number" name="quantity" value="{{ item.quantity }}" min="1"
+                                class="form-control form-control-sm mr-2" style="width: 60px;">
+                            <button type="submit" class="btn btn-sm btn-outline-secondary">Update</button>
+                        </form>
+                    </td>
+                    <td>${{ item.total|floatformat:2 }}</td>
+                    <td>
+                        <a href="{% url 'remove_from_basket' item.id %}" class="btn btn-danger btn-sm">Remove</a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        <div class="text-right">
+            <h4>Total: ${{ total_basket_price|floatformat:2 }}</h4>
+            <a href="{% url 'order' %}" class="btn btn-success">Proceed to Checkout</a>
+        </div>
+        {% else %}
+        <p>Your basket is empty.</p>
+        <a href="{% url 'menu' %}" class="btn btn-primary">View Menu</a>
+        {% endif %}
+    </div>
+</div>
+<script>
+    function updateBasket(itemId, quantity) {
+        fetch("{% url 'add_to_basket' %}", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "X-CSRFToken": "{{ csrf_token }}"
+            },
+            body: JSON.stringify({ item_id: itemId, quantity: quantity })
+        })
+            .then(response => response.json())
+            .then(data => {
+                if (data.status === "success") {
+                    alert(data.message); // Show the success message
+                    location.reload(); // Refresh the page after the message is acknowledged
+                } else {
+                    alert(data.message);
+                }
+            });
+    }
+</script>
+{% endblock %}
